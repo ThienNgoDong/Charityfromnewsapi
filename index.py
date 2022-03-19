@@ -28,7 +28,7 @@ def get_news():
             "subject": r[1],
             "description": r[2],
             "image": r[3],
-            "orifinal_url": r[4]
+            "original_url": r[4]
         })
 
     return jsonify({"new": data})
