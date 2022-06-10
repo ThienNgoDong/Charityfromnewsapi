@@ -18,20 +18,20 @@ def get_categories():
     return jsonify({"categories": data})
 
 
-# @app.route("/news", methods=["GET"])
-# def get_news():
-#     rows = utils.get_all("SELECT * FROM news")
-#     data = []
-#     for r in rows:
-#         data.append({
-#             "id": r[0],
-#             "subject": r[1],
-#             "description": r[2],
-#             "image": r[3],
-#             "original_url": r[4]
-#         })
-#
-#     return jsonify({"new": data})
+@app.route("/news/all", methods=["GET"])
+def get_news():
+    rows = utils.get_all("SELECT * FROM news")
+    data = []
+    for r in rows:
+        data.append({
+            "id": r[0],
+            "subject": r[1],
+            "description": r[2],
+            "image": r[3],
+            "original_url": r[4]
+        })
+
+    return jsonify({"new": data})
 
 
 @app.route("/news", methods=["GET"])
