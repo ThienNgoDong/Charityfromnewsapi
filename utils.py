@@ -1,6 +1,7 @@
 import sqlite3
 import newspaper
 from newspaper import Article
+import nltk
 
 
 def get_all(query):
@@ -54,5 +55,51 @@ def get_news_url():
     conn.close()
 
 
+def test():
+    cats = get_all("SELECT * FROM category")
+    conn = sqlite3.connect("data/newsdb.db")
+    for cat in cats:
+        cat_id = cat[0]
+        url = cat[2]
+        cat_paper = newspaper.build(url)
+        for article in cat_paper.articles:
+            try:
+                print("===", article.url)
+                # add_news(conn, article.url, cat_id)
+                article1 = Article(article.url)
+                article1.download()
+                article1.parse()
+                check = article1.url.__contains__("tu-thien")
+                print(check)
+            except Exception as ex:
+                print("ERROR: " + str(ex))
+
+    conn.close()
+
+    # article = Article("https://congan.com.vn/tu-thien/do-dang-viec-hoc-do-ung-thu-da-day_132163.html")
+    # article.download()
+    # article.parse()
+    # # article.nlp()
+    # t2 = article.url.__contains__("tu-thien")
+    # print(t2)
+
+
+def test2(pageIndex, pageSize):
+    conn = sqlite3.connect("data/newsdb.db")
+    query = """
+    SELECT * 
+    FROM( SELECT ROW_NUMBER() OVER(ORDER BY id) AS ROWNUMBER, 
+    count(*) OVER() as TOTALNUMBERCOUNT,
+    u.* from news u) post
+    WHERE ROWNUMBER > ((:pageindex - 1) * :pagesize)
+    AND ROWNUMBER < (:pageindex * :pagesize + 1); 
+    """
+    data = conn.execute(query, {"pageindex": pageIndex, "pagesize": pageSize}).fetchall()
+    print(data)
+    print(data.__len__())
+    conn.close()
+    return data
+
+
 if __name__ == "__main__":
-    get_news_url()
+    test2(2, 6)
